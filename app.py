@@ -154,4 +154,4 @@ def regularpage(pagename = None):
     return "You've arrived at : " + pagename
 
 if __name__ == "__main__":
-    app.run(debug=True,host='localhost')
+    app.run(debug=True,host='0.0.0.0',port=5000)
