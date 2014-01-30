@@ -10,7 +10,7 @@ import math
 app = Flask(__name__)
 
 def sqlExec(query):
-    db = MySQLdb.connect(user="root", host="localhost", port=3306, db='loans')
+    db = MySQLdb.connect(user="root", host="0.0.0.0", port=3306, db='loans')
     with db:
         cur = db.cursor(MySQLdb.cursors.DictCursor)
         cur.execute(query)
@@ -154,4 +154,4 @@ def regularpage(pagename = None):
     return "You've arrived at : " + pagename
 
 if __name__ == "__main__":
-    app.run(debug=True,host='0.0.0.0',port=5000)
+    app.run(debug=True,host='0.0.0.0',port=80,user="root")
