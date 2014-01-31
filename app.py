@@ -18,8 +18,6 @@ def sqlExec(query):
         return tables
 
 
-#db = MySQLdb.connect(user="root",host="localhost",port=3306,db="loans")
-
 @app.route("/")
 def hello():
     #return "Hello World!"
@@ -43,17 +41,29 @@ def search():
 
     pickle.dump( loan_id, open( "passloan.pkl", "wb" ) )
     
-    loan_info=sqlExec("SELECT  name, borrowers_gender, location_country, sector, activity, loan_amount, description_num_languages, posted_date, terms_repayment_term, partner_id, image_id from Loans where loan_id = %d;" % loan_id)
+    loan_info=sqlExec("SELECT  name, borrowers_gender, location_country,location_country_code, sector, loan_amount, description_num_languages, posted_date, terms_repayment_term, image_id from Loans where loan_id = %d;" % loan_id)
     
     posted_date_months=loan_info[0]['posted_date'].month
     
+
     image_id_str = str(loan_info[0]['image_id'])
     
-    (country_map, sector_map, borrower_gender_map,activity_map) = pickle.load( open( "maps.pkl", "rb" ) )
+    # change country code to continent
+    continent_map = pickle.load( open( "continent_map.pkl", "rb" ) )
+    continent = continent_map[loan_info[0]['location_country_code']]
     
-    #input_loan_amount = int(request.args.get("input_loan_amount",0,type = int))
+    #vectorize contients and sectors
+    (contdict,sectordict) = pickle.load( open( "contsect_dict.pkl", "rb" ) )
+    continent_vec = contdict[continent]
+    sector_vec = sectordict[loan_info[0]['sector']]
     
-    xin = np.array( [borrower_gender_map[loan_info[0]['borrowers_gender']],loan_info[0]['description_num_languages'],loan_info[0]['loan_amount'],country_map[loan_info[0]['location_country']], sector_map[loan_info[0]['sector']],activity_map[loan_info[0]['activity']],posted_date_months,loan_info[0]['partner_id'],loan_info[0]['terms_repayment_term'] ]  )
+    if loan_info[0]['borrowers_gender'] == 'F':
+        borrowers_gender = 1
+    else:
+        borrowers_gender=0
+
+    xin = np.append(continent_vec,sector_vec)
+    xin = np.append(xin,np.array( [borrowers_gender,loan_info[0]['description_num_languages'],loan_info[0]['loan_amount'],posted_date_months,loan_info[0]['terms_repayment_term'] ] ))
     
     clf = pickle.load( open( "alg.pkl", "rb" ) )
     y = clf.predict(xin)[0]
@@ -71,12 +81,24 @@ def search():
 def eval():
     loan_id = pickle.load( open( "passloan.pkl", "rb" ) )
     
-    loan_info=sqlExec("SELECT  name,borrowers_gender, location_country, sector, activity, loan_amount, description_num_languages, posted_date, terms_repayment_term, partner_id from Loans where loan_id = %d;" % loan_id)
+    loan_info=sqlExec("SELECT  name, borrowers_gender, location_country,location_country_code, sector, loan_amount, description_num_languages, posted_date, terms_repayment_term, image_id from Loans where loan_id = %d;" % loan_id)
     
     posted_date_months=loan_info[0]['posted_date'].month
+
+    # change country code to continent
+    continent_map = pickle.load( open( "continent_map.pkl", "rb" ) )
+    continent = continent_map[loan_info[0]['location_country_code']]
+    #vectorize contients and sectors
+    (contdict,sectordict) = pickle.load( open( "contsect_dict.pkl", "rb" ) )
+    continent_vec = contdict[continent]
+    sector_vec = sectordict[loan_info[0]['sector']]
     
-    (country_map, sector_map, borrower_gender_map,activity_map) = pickle.load( open( "maps.pkl", "rb" ) )
-    
+    if loan_info[0]['borrowers_gender'] == 'F':
+        borrowers_gender = 1
+    else:
+        borrowers_gender=0
+
+
     clf = pickle.load( open( "alg.pkl", "rb" ) )
     
     requested_loan_amount = loan_info[0]['loan_amount']
@@ -100,7 +122,10 @@ def eval():
     predMatrix=[]
     for amount in amount_pred:
         for month in month_pred:
-            xin = np.array( [borrower_gender_map[loan_info[0]['borrowers_gender']],loan_info[0]['description_num_languages'],amount,country_map[loan_info[0]['location_country']], sector_map[loan_info[0]['sector']],activity_map[loan_info[0]['activity']],posted_date_months,loan_info[0]['partner_id'],month ]  )
+            xin = np.append(continent_vec,sector_vec,1)
+            xin = np.append(xin,np.array( [borrowers_gender,loan_info[0]['description_num_languages'],amount,posted_date_months,month ] ))
+
+            #xin = np.array( [borrower_gender_map[loan_info[0]['borrowers_gender']],loan_info[0]['description_num_languages'],amount,country_map[loan_info[0]['location_country']], sector_map[loan_info[0]['sector']],activity_map[loan_info[0]['activity']],posted_date_months,loan_info[0]['partner_id'],month ]  )
 
             predprob = clf.predict_proba(xin)[0][0]
             predMatrix.append((amount, month, predprob) )
@@ -120,28 +145,6 @@ def eval():
     return render_template('eval.html',loan_info=loan_info,loan_id=loan_id,roundedReqAmt=roundedReqAmt,requested_repayment_term=requested_repayment_term,gridAmtSet=gridAmtSet,amount_pred_str=amount_pred_str,month_pred_str=month_pred_str)
 
 
-
-@app.route("/db")
-def cities_page():
-    db.query("SELECT Name FROM city;")
-    query_results=db.store_result().fetch_row(maxrows=0)
-    cities = ""
-    for result in query_results:
-        cities += unicode(result[0],'ISO-8859-1')
-        cities += "<br>"
-    return cities
-
-@app.route("/db_fancy")
-def cities_page_fancy():
-    db.query("SELECT Name, CountryCode, Population FROM city;")
-    
-    query_results = db.store_result().fetch_row(maxrows=0)
-    cities = []
-    for result in query_results:
-        cities.append(dict(name=unicode(result[0], 'ISO-8859-1'), country=result[1], population=result[2]))
-    return render_template('cities.html', cities=cities)
-
-
 @app.route("/blocker")
 def block():
     return "Blocked!"
@@ -154,4 +157,4 @@ def regularpage(pagename = None):
     return "You've arrived at : " + pagename
 
 if __name__ == "__main__":
-    app.run(debug=True,host='0.0.0.0',port=80,user="root")
+    app.run(debug=True,host='0.0.0.0',port=5000)

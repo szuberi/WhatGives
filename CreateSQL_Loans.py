@@ -11,8 +11,8 @@ con = db.connect(user="root",host="localhost",port=3306,db="loans")
 with con:
     #First create the table
     cur = con.cursor()
-    cur.execute("DROP TABLE IF EXISTS LoansSmall")
-    cur.execute("CREATE TABLE LoansSmall(activity TEXT NOT NULL, \
+    cur.execute("DROP TABLE IF EXISTS Loans")
+    cur.execute("CREATE TABLE Loans(activity TEXT NOT NULL, \
                 bonus_credit_eligibility BOOL NOT NULL, \
                 borrowers_first_name TEXT NOT NULL, \
                 borrowers_gender TEXT NOT NULL, \
@@ -41,8 +41,9 @@ with con:
                 terms_loss_liability_nonpayment TEXT NOT NULL,\
                 terms_repayment_interval TEXT NOT NULL,\
                 terms_repayment_term INT NOT NULL,\
+                location_country_code TEXT NOT NULL,\
                 PRIMARY KEY(loan_id)) ENGINE = InnoDB;")
-                
+
     #jsonfiles = ['850','851','852','853']
     jsonfiles=[]
     for i in range(500):
@@ -135,11 +136,14 @@ with con:
                 v_terms_repayment_interval = loanjson[i]['terms']['repayment_interval'].encode('ascii','ignore')
 
             v_terms_repayment_term = loanjson[i]['terms']['repayment_term']
+            
+            v_location_country_code=loanjson[i]['location']['country_code'].encode('ascii','ignore')
+            
 
             try:
-                cur.execute('INSERT INTO LoansSmall(activity, bonus_credit_eligibility, borrowers_first_name, borrowers_gender, borrowers_last_name, borrowers_pictured, description_num_languages,funded_amount, funded_date, loan_id, image_id,image_template_id, journal_totals_bulkEntries, journal_totals_entries,lender_count,loan_amount, location_country,location_geo,location_town,name,partner_id, planned_expiration_date, posted_date, sector, status,terms_loss_liability_currency_exchange,terms_loss_liability_nonpayment,terms_repayment_interval,terms_repayment_term) \
-                    VALUES("%s", "%d","%s","%s","%s","%d","%d","%d","%s","%d","%d","%d","%d","%d","%d","%d", "%s","%s","%s","%s","%d","%s","%s","%s","%s","%s","%s","%s","%d")' % \
-                    (v_activity, v_bonus_credit_eligibility, v_borrowers_first_name, v_borrowers_gender, v_borrowers_last_name, v_borrowers_pictured, v_description_num_languages,v_funded_amount, v_funded_date, v_loan_id, v_image_id,v_image_template_id, v_journal_totals_bulkEntries, v_journal_totals_entries,v_lender_count,v_loan_amount, v_location_country,v_location_geo,v_location_town,v_name,v_partner_id, v_planned_expiration_date, v_posted_date, v_sector, v_status,v_terms_loss_liability_currency_exchange,v_terms_loss_liability_nonpayment,v_terms_repayment_interval,v_terms_repayment_term))
+                cur.execute('INSERT INTO Loans(activity, bonus_credit_eligibility, borrowers_first_name, borrowers_gender, borrowers_last_name, borrowers_pictured, description_num_languages,funded_amount, funded_date, loan_id, image_id,image_template_id, journal_totals_bulkEntries, journal_totals_entries,lender_count,loan_amount, location_country,location_geo,location_town,name,partner_id, planned_expiration_date, posted_date, sector, status,terms_loss_liability_currency_exchange,terms_loss_liability_nonpayment,terms_repayment_interval,terms_repayment_term,location_country_code) \
+                    VALUES("%s", "%d","%s","%s","%s","%d","%d","%d","%s","%d","%d","%d","%d","%d","%d","%d", "%s","%s","%s","%s","%d","%s","%s","%s","%s","%s","%s","%s","%d","%s")' % \
+                        (v_activity, v_bonus_credit_eligibility, v_borrowers_first_name, v_borrowers_gender, v_borrowers_last_name, v_borrowers_pictured, v_description_num_languages,v_funded_amount, v_funded_date, v_loan_id, v_image_id,v_image_template_id, v_journal_totals_bulkEntries, v_journal_totals_entries,v_lender_count,v_loan_amount, v_location_country,v_location_geo,v_location_town,v_name,v_partner_id, v_planned_expiration_date, v_posted_date, v_sector, v_status,v_terms_loss_liability_currency_exchange,v_terms_loss_liability_nonpayment,v_terms_repayment_interval,v_terms_repayment_term,v_location_country_code))
             except:
                 continue
 
