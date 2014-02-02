@@ -37,8 +37,7 @@ var dayLabels = svg.selectAll(".dayLabel")
   .attr("y", function (d, i) { return i * gridSize; })
   .style("text-anchor", "end")
   .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
-//.attr("class", function (d, i) { return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); })
-.attr("class", function (d, i) { return ((i >= 0 ) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); });
+  .attr("class", function (d, i) { return ((i >= 0 ) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); });
 
 var timeLabels = svg.selectAll(".timeLabel")
   .data(times)
@@ -50,8 +49,6 @@ var timeLabels = svg.selectAll(".timeLabel")
   .attr("transform", "translate(" + gridSize / 2 + ", -6)")
   .attr("class", function(d, i) { return ((i >= 0) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"); });
 
-console.log(requested_repayment_term)
-console.log(roundedReqAmt)
 
 var heatMap = svg.selectAll(".hour")
   .data(data)
@@ -69,13 +66,18 @@ var heatMap = svg.selectAll(".hour")
 heatMap.transition().duration(1000)
   .style("fill", function(d) { return colorScale(d.value); });
 
+
+
 d3.selectAll("rect.bordered")
   .classed("target", function(d) {
-    return d.hour == requested_repayment_term && d.day ==100*roundedReqAmt;
-  }
-)
+    return d.hour == requested_repayment_term && d.day ==100*binreqLoanAmount;
+  })
        
+console.log(requested_repayment_term)
+console.log(roundedReqAmt)
+console.log(binreqLoanAmount)
 
+       
 d3.select("#chart").append("text")
   .attr("id","fund")
   .text( " ")
@@ -106,7 +108,7 @@ d3.select("svg").append("text")
     .text( " Loan Amount ($)")
     .style("position","absolute")
     //.attr("style", "writing-mode: tb")
-    .attr("transform", "translate(15,250)rotate(270)")
+    .attr("transform", "translate(10,250)rotate(270)")
     //.style.transform("rotate(90deg)")
     //.style("left","25px")
     //.style("top","225px")

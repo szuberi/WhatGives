@@ -9,8 +9,9 @@ import math
 
 app = Flask(__name__)
 
+#Change sql to 0.0.0.0
 def sqlExec(query):
-    db = MySQLdb.connect(user="root", host="0.0.0.0", port=3306, db='loans')
+    db = MySQLdb.connect(user="root", host="localhost", port=3306, db='loans')
     with db:
         cur = db.cursor(MySQLdb.cursors.DictCursor)
         cur.execute(query)
@@ -20,14 +21,13 @@ def sqlExec(query):
 
 @app.route("/")
 def hello():
-    #return "Hello World!"
     return render_template('index.html')
 
 @app.route("/index.html")
 def indexfn():
     return render_template('index.html')
 
-@app.route("/about")
+@app.route("/about.html")
 def aboutfn():
     return render_template('about.html')
 
@@ -103,6 +103,7 @@ def eval():
     
     requested_loan_amount = loan_info[0]['loan_amount']
     requested_repayment_term = loan_info[0]['terms_repayment_term']
+    binreqLoanAmount=int(round(loan_info[0]['loan_amount'],-2))/100
 
     if requested_repayment_term > 10:
         month_pred = [i for i in range(requested_repayment_term-10,requested_repayment_term+10)]
@@ -111,8 +112,8 @@ def eval():
 
     roundedReqAmt = int(math.floor(requested_loan_amount/100))
 
-    if requested_loan_amount > 1000:
-        gridAmtSet = int(math.floor(requested_loan_amount/100))
+    if binreqLoanAmount >= 10:
+        gridAmtSet = binreqLoanAmount
     else:
         gridAmtSet = 5
 
@@ -122,12 +123,12 @@ def eval():
     predMatrix=[]
     for amount in amount_pred:
         for month in month_pred:
-            xin = np.append(continent_vec,sector_vec,1)
+            xin = np.append(continent_vec,sector_vec)
             xin = np.append(xin,np.array( [borrowers_gender,loan_info[0]['description_num_languages'],amount,posted_date_months,month ] ))
 
             #xin = np.array( [borrower_gender_map[loan_info[0]['borrowers_gender']],loan_info[0]['description_num_languages'],amount,country_map[loan_info[0]['location_country']], sector_map[loan_info[0]['sector']],activity_map[loan_info[0]['activity']],posted_date_months,loan_info[0]['partner_id'],month ]  )
 
-            predprob = clf.predict_proba(xin)[0][0]
+            predprob = round(clf.predict_proba(xin)[0][0],2)
             predMatrix.append((amount, month, predprob) )
     
     # write to tsv file
@@ -142,7 +143,7 @@ def eval():
     amount_pred_str = str(amount_pred)
     month_pred_str = str(month_pred)
 
-    return render_template('eval.html',loan_info=loan_info,loan_id=loan_id,roundedReqAmt=roundedReqAmt,requested_repayment_term=requested_repayment_term,gridAmtSet=gridAmtSet,amount_pred_str=amount_pred_str,month_pred_str=month_pred_str)
+    return render_template('eval.html',loan_info=loan_info,loan_id=loan_id,roundedReqAmt=roundedReqAmt,requested_repayment_term=requested_repayment_term,gridAmtSet=gridAmtSet,amount_pred_str=amount_pred_str,month_pred_str=month_pred_str,binreqLoanAmount=binreqLoanAmount)
 
 
 @app.route("/blocker")
