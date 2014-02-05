@@ -56,13 +56,53 @@
 				<h2>Making Loans that Change Lives More Successful</h2>
                 <br>
                <!-- <h4 style="font-family:arial;color:#2d2d2d;font-size:20px;"> <b>Enter Loan ID</b> </h4>-->
-                <form  action="search.html" method="get">
-                    <input id="loan_id" type="text" name="loan_id" placeholder=" Enter Kiva Loan ID" value="">
+                <!--<form  action="search.html" method="get">
+                    <input id="loan_id" type="text" name="loan_id" placeholder=" Enter Kiva Loan ID" value=""> -->
                         <!-- button not working!
                         <button type="button" class="btn btn-success" data-dismiss="modal">GO</button>-->
-                </form>
-				</div>
-			</div><!-- row -->
+                        
+                <!-- Split button -->
+                <!--<div class="btn-toolbar text-center">
+                    <form class="form-inline input-lg" role="search" action="search.html" method="get">
+                        <input id="loan_id" type="text" name="loan_id" placeholder=" Enter Kiva Loan ID" value="">
+                            <br>
+                        <div class="form-group">
+                            <select class="selectpicker" onchange="$('#loan_id').val($(this).val())" data-style="btn-info btn-lg" label="ExampleID" name='ExampleID'>
+                                <option>Try Me</option>
+                                <option>430883</option>
+                                <option>527685</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>-->
+                </div><!-- col -->
+            </div><!-- row centered -->
+
+
+                <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+
+                <form  action="search.html" method="get">
+                    <div class="input-group">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" onchange="$('#loan_id').val($(this).val())" data-toggle="dropdown">Example ID <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                        <li><a href="#" onclick="$('#loan_id').val('430883'); $('form').submit()">430883</a></li>
+                        <li><a href="#" onclick="$('#loan_id').val('527685')">527685</a></li>
+                        <li><a href="#" onclick="$('#loan_id').val('574748')">574748</a></li>
+                        </ul>
+                    </div><!-- /btn-group -->
+                    
+                    <input id="loan_id" type="text" name="loan_id" placeholder=" Enter Kiva Loan ID" value="" class="form-control" placeholder=".col-lg-6">
+                    
+                    </div><!-- /input-group -->
+                </form><!-- action search.html-->
+                </div> <!--col -->
+                </div>
+
+
+
+
 		</div><!-- container -->
 	</div><!-- headerwrap -->
 
@@ -72,7 +112,8 @@
 	<div id="f">
 		<div class="container">
 			<div class="row centered">
-				<!--<a href="#"><i class="fa fa-twitter"></i></a><a href="#"><i class="fa fa-facebook"></i></a><a href="#"><i class="fa fa-dribbble"></i></a> -->
+
+            <!--<a href="#"><i class="fa fa-twitter"></i></a><a href="#"><i class="fa fa-facebook"></i></a><a href="#"><i class="fa fa-dribbble"></i></a> -->
 		
 			</div><!-- row -->
 		</div><!-- container -->
