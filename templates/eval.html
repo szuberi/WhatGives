@@ -21,6 +21,23 @@
         <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
         <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
         
+        <script type="text/javascript">
+            $(document).ready(function(){
+                              
+                              //Check if the current URL contains '#'
+                              if(document.URL.indexOf("#")==-1)
+                              {
+                              // Set the URL to whatever it was plus "#".
+                              url = document.URL+"#";
+                              location = "#";
+                              
+                              //Reload the page
+                              location.reload(true);
+                              
+                              }
+                              });
+            </script> 
+        
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -29,7 +46,6 @@
     </head>
     
     <body>
-        
         <!-- Fixed navbar -->
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
