@@ -6,6 +6,7 @@ import numpy as np
 import dateutil.parser
 import csv
 import math
+import random
 
 app = Flask(__name__)
 
@@ -21,11 +22,23 @@ def sqlExec(query):
 
 @app.route("/")
 def hello():
-    return render_template('index.html')
+    ifexists = 0
+    while ifexists ==0:
+        rand_loanid = random.randint(358219,652906)
+        cnt=sqlExec("SELECT COUNT(1) AS total FROM Loans WHERE loan_id = %d;" % rand_loanid)
+        ifexists = int(cnt[0]['total'])
+        
+    return render_template('index.html',rand_loanid=rand_loanid)
 
 @app.route("/index.html")
 def indexfn():
-    return render_template('index.html')
+    ifexists = 0
+    while ifexists ==0:
+        rand_loanid = random.randint(358219,652906)
+        cnt=sqlExec("SELECT COUNT(1) AS total FROM Loans WHERE loan_id = %d;" % rand_loanid)
+        ifexists = int(cnt[0]['total'])
+        
+    return render_template('index.html',rand_loanid=rand_loanid)
 
 @app.route("/about.html")
 def aboutfn():

@@ -16,7 +16,24 @@
 
     <!-- Custom styles for this template -->
     <link href="static/assets/css/main.css" rel="stylesheet">
+    <script type="text/javascript" src='static/jquery/jquery-2.0.3.min.js'></script>
 
+    <script type="text/javascript">
+            $(document).ready(function(){
+                              
+                              //Check if the current URL contains '#'
+                              if(document.URL.indexOf("#")==-1)
+                              {
+                              // Set the URL to whatever it was plus "#".
+                              url = document.URL+"#";
+                              location = "#";
+                              
+                              //Reload the page
+                              location.reload(true);
+                              
+                              }
+                              });
+    </script> 
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -85,15 +102,19 @@
                 <form  action="search.html" method="get">
                     <div class="input-group">
                     <div class="input-group-btn">
-                        <button type="button" class="btn btn-default dropdown-toggle" onchange="$('#loan_id').val($(this).val())" data-toggle="dropdown">Example ID <span class="caret"></span></button>
+                        <button type="button" class="btn btn-default dropdown-toggle" onchange="$('#loan_id').val($(this).val())" data-toggle="dropdown">Example ID<span class="caret"></span></button>
                         <ul class="dropdown-menu">
                         <li><a href="#" onclick="$('#loan_id').val('430883'); $('form').submit()">430883</a></li>
                         <li><a href="#" onclick="$('#loan_id').val('527685')">527685</a></li>
                         <li><a href="#" onclick="$('#loan_id').val('574748')">574748</a></li>
+                        <li><a href="#" onclick="$('#loan_id').val('384315')">384315</a></li>
+                        <li><a href="#" onclick="$('#loan_id').val('429711')">429711</a></li>
+                        <li><a href="#" onclick="$('#loan_id').val('487484')">487484</a></li>
+                        <li><a href="#" onclick="$('#loan_id').val('{{rand_loanid}}')">Random</a></li>
                         </ul>
                     </div><!-- /btn-group -->
                     
-                    <input id="loan_id" type="text" name="loan_id" placeholder=" Enter Kiva Loan ID" value="" class="form-control" placeholder=".col-lg-6">
+                    <input id="loan_id" type="text" name="loan_id" placeholder=" Enter Kiva Loan ID and Hit Enter" value="" class="form-control" placeholder=".col-lg-6">
                     
                     </div><!-- /input-group -->
                 </form><!-- action search.html-->
